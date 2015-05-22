@@ -25,7 +25,7 @@ var selector = '.graph';
 
 function main() {
   var sqlStm = 'SELECT COUNT(*) counts, date_trunc(\'{{groupDate}}\',postedtime) date, category_name cat FROM ' + twitterTable + ' WHERE postedtime > \'{{afterTime}}\'::DATE GROUP BY 2,3 ORDER BY 2,3 ASC';
-  
+
   sql.execute(sqlStm,{groupDate : groupDate, afterTime : afterTime })
     .done(function(twitterData){
       sql.execute('SELECT DISTINCT(category_name) cat FROM ' + twitterTable + ' ORDER BY category_name')
@@ -47,7 +47,7 @@ function main() {
         })
         .error(logErrors);
     })
-  .error(logErrors);*/
+  .error(logErrors);
 }
 
 function logErrors(errors){
@@ -96,13 +96,13 @@ function createGraph(lineClasses){
     chart._options.tooltipContent = function (a,b,c){return"<p>"+c+"</p>"};
 
     d3.select(selector)
-          .append('svg')    //Select the <svg> element you want to render the chart in.   
+          .append('svg')    //Select the <svg> element you want to render the chart in.
           .datum(lineClasses)         //Populate the <svg> element with chart data...
           .call(chart);      //Finally, render the chart!
 
     //Update the chart when window resizes.
-    nv.utils.windowResize(function() { chart.update() });  
-    
+    nv.utils.windowResize(function() { chart.update() });
+
     return chart;
   });// nv.addGraph
 }; // Create Graph
