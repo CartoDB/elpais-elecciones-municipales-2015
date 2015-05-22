@@ -55,46 +55,5 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.2/d3.min.js" charset="utf-8"></script>
         <script src="js/vendor/nv.d3.min.js"></script>
         <script src="js/main.js"></script>
-
-        <script>
-          var baseLayer = 'http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png';
-          var basemap;
-          function main() {
-            cartodb.createVis('map', 'https://team.cartodb.com/u/piensaenpixel/api/v2/viz/ab8866f6-005a-11e5-ba52-0e0c41326911/viz.json', {
-                title: false
-            })
-            .done(function(vis, layers) {
-                basemap = layers[0];
-              basemap.setUrl(baseLayer);
-              // layer 0 is the base layer, layer 1 is cartodb layer
-              // setInteraction is disabled by default
-              layers[1].setInteraction(true);
-              layers[1].on('featureOver', function(e, latlng, pos, data) {
-                cartodb.log.log(e, latlng, pos, data);
-              });
-              // you can get the native map to work with it
-              var map = vis.getNativeMap();
-              // now, perform any operations you need
-              // map.setZoom(3);
-              // map.panTo([50.5, 30.5]);
-            })
-            .error(function(err) {
-              console.log(err);
-            });
-          }
-          window.onload = main;
-
-          $( document ).ready(function() {
-                    $( "#white" ).click(function() {
-                            var baseLayer = 'http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png';
-                            basemap.setUrl(baseLayer);
-                        });
-                    $( "#dark" ).click(function() {
-                            var baseLayer = 'http://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png';
-                            basemap.setUrl(baseLayer);
-                        });
-                });
-
-        </script>
     </body>
 </html>

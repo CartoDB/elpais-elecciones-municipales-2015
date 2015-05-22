@@ -1,5 +1,5 @@
 /* Coniguration block*/
-
+var baseLayer = 'http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png';
 // Fake data?
 var isFake = true;
 // User at CartoDB to retrieve the data
@@ -26,7 +26,6 @@ var graphTimeFormat='%d/%m';
 var selector = '.graph';
 
 /* End of the configuration block*/
-
 function main() {
   var sqlStm = 'SELECT COUNT(*) counts, date_trunc(\'{{groupDate}}\',postedtime) date, category_name cat FROM ' + twitterTable + ' WHERE postedtime > \'{{afterTime}}\'::DATE GROUP BY 2,3 ORDER BY 2,3 ASC';
 
@@ -61,13 +60,14 @@ function logErrors(errors){
 function lineData(catName, twitterData){
   var values = [];
   twitterData.forEach(function(twitt){
-    var date = +d3.time.format.iso.parse(twitt.date);
+    //var date = +d3.time.format.iso.parse(twitt.date);
+    var date = new Date(twitt.date);
     var y = twitt.counts;
     if (isFake){
       y = y + Math.floor(y*Math.random() * Math.floor((Math.random()*2-1)));
     }
     values.push({
-      x : +date,
+      x : date,
       y : y
     });
   });
@@ -84,8 +84,8 @@ function lineData(catName, twitterData){
 */
 
 function createGraph(lineClasses){
+    nv.addGraph(function() {
 
-  nv.addGraph(function() {
     var chart = nv.models.lineChart()
       .margin({left: 0, right: 0, top: 0, bottom: 0})  // Adjust chart margins to give the x-axis some breathing room.
       //.useInteractiveGuideline(true)  //We want nice looking tooltips and a guideline!
@@ -95,7 +95,8 @@ function createGraph(lineClasses){
       .showYAxis(false)        //Show the y-axis
       .showXAxis(false)        //Show the x-axis
       .interpolate('basis')
-      .xScale(d3.time.scale());
+      //.xScale(d3.time.scale())
+      ;
 
     chart.xAxis     //Chart x-axis settings
         .tickFormat(function(d) {
@@ -109,12 +110,71 @@ function createGraph(lineClasses){
           .datum(lineClasses)         //Populate the <svg> element with chart data...
           .call(chart);      //Finally, render the chart!
 
+    //initialize a vertical bar on the chart that will indicate current time
+    var verticalBar = d3.select('svg')
+      .append("line")
+      .attr("x1", chart.margin().left)
+      .attr("y1", chart.margin().top-5)
+      .attr("x2", chart.margin().left)
+      .attr("y2", 130)
+      .style("stroke-width", 2)
+      .style("stroke", "gray")
+      .style("fill", "none");
+
     //Update the chart when window resizes.
     nv.utils.windowResize(function() { chart.update() });
 
-
+    createMap(verticalBar,chart);
     return chart;
-  });// nv.addGraph
+  });
 }; // Create Graph
 
-window.onload = main;
+function createMap(verticalBar,chart){
+
+  cartodb.createVis('map', 'https://team.cartodb.com/u/piensaenpixel/api/v2/viz/ab8866f6-005a-11e5-ba52-0e0c41326911/viz.json', {
+      title: false
+  })
+  .done(function(vis, layers) {
+    basemap = layers[0];
+    basemap.setUrl(baseLayer);
+    layers[1]
+      .on('featureOver', function(e, latlng, pos, data) {
+        cartodb.log.log(e, latlng, pos, data);
+      })
+      .on('change:time', function(changes) {
+          //update the vertical bar
+          /*if (verticalBar && chart){
+            verticalBar.attr(
+              "x1",
+              chart.xAxis.scale()(new Date(changes.time))+chart.margin().left
+            )
+            .attr(
+              "x2",
+              chart.xAxis.scale()(new Date(changes.time))+chart.margin().left)
+          }*/
+      });
+    // you can get the native map to work with it
+    var map = vis.getNativeMap();
+  })
+  .error(function(err) {
+    console.log(err);
+  });
+}
+
+
+
+
+$( document ).ready(function() {
+  var basemap;
+  // Base layer switcher
+  $( "#white" ).click(function() {
+          var baseLayer = 'http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png';
+          basemap.setUrl(baseLayer);
+      });
+  $( "#dark" ).click(function() {
+          var baseLayer = 'http://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png';
+          basemap.setUrl(baseLayer);
+      });
+
+    main();
+});
