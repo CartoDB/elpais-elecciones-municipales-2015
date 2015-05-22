@@ -9,8 +9,6 @@ var twitterTable = 'tuits_test';
 // Aggregation level to retrieve the data
 // Valid values are MINUTE, HOUR, DAY, WEEK, MONTH, YEAR
 var groupDate = 'DAY';
-// Date since the data wants to be retrieved
-var afterTime = '2015-01-01';
 //  Name and colors to assign to the parties
 var partiesData = {
   '1' : {name : 'PSOE', color : '#CE4039'},
@@ -24,15 +22,18 @@ var partiesData = {
 var graphTimeFormat='%d/%m';
 // Selector at the HTML to load the graph
 var selector = '.graph';
+// Adjust the verticalBar to the Torque animation (hack)
+var barOffset = - 50;
 /* End of the configuration block*/
 
 var baseLayer = 'http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png';
 var basemap;
 
 function main() {
-  var sqlStm = 'SELECT COUNT(*) counts, date_trunc(\'{{groupDate}}\',postedtime) date, category_name cat FROM ' + twitterTable + ' WHERE postedtime > \'{{afterTime}}\'::DATE GROUP BY 2,3 ORDER BY 2,3 ASC';
+  var sqlStm = 'SELECT COUNT(*) counts, date_trunc(\'{{groupDate}}\',postedtime) date, category_name cat FROM '
+  + twitterTable + ' GROUP BY 2,3 ORDER BY 2,3 ASC';
 
-  sql.execute(sqlStm,{groupDate : groupDate, afterTime : afterTime })
+  sql.execute(sqlStm,{groupDate : groupDate})
     .done(function(twitterData){
       sql.execute('SELECT DISTINCT(category_name) cat FROM ' + twitterTable + ' ORDER BY category_name')
         .done(function(catsData){
@@ -145,13 +146,11 @@ function createMap(verticalBar,chart){
       .on('change:time', function(changes) {
           //update the vertical bar
           if (verticalBar && chart){
-            verticalBar.attr(
-              "x1",
-              chart.xAxis.scale()(new Date(changes.time))+chart.margin().left
-            )
-            .attr(
-              "x2",
-              chart.xAxis.scale()(new Date(changes.time))+chart.margin().left)
+            var x1 =  chart.xAxis.scale()(new Date(changes.time)) + barOffset;
+
+            if (x1 > 0 && x1 < chart.xAxis.range()[1]){
+              verticalBar.attr("x1",x1).attr("x2",x1);
+            }
           }
       });
     // you can get the native map to work with it
@@ -166,7 +165,6 @@ function createMap(verticalBar,chart){
 
 
 $( document ).ready(function() {
-
   // Base layer switcher
   $( "#white" ).click(function() {
           var baseLayer = 'http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png';
