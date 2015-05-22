@@ -169,13 +169,15 @@ $( document ).ready(function() {
 
   // Base layer switcher
   $( "#white" ).click(function() {
-          var baseLayer = 'http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png';
-          basemap.setUrl(baseLayer);
-      });
+    var baseLayer = 'http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png';
+    basemap.setUrl(baseLayer);
+    $( '.tabs > li a' ).toggleClass( "is-active" );
+  });
   $( "#dark" ).click(function() {
-          var baseLayer = 'http://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png';
-          basemap.setUrl(baseLayer);
-      });
+    var baseLayer = 'http://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png';
+    basemap.setUrl(baseLayer);
+    $( '.tabs > li a' ).toggleClass( "is-active" );
+  });
 
-    main();
+  main();
 });

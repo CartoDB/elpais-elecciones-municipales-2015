@@ -14,15 +14,116 @@
         <link rel="stylesheet" href="css/nv.d3.css">
         <link rel="stylesheet" href="css/main.css">
         <script src="js/vendor/modernizr-2.8.3.min.js"></script>
+        <style type
+
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+            }
+            body, html {
+                min-height: 100%;
+                height: 100%;
+            }
+            iframe {
+                width: 100%;
+                height: 60px;
+            }
+            #map {
+                border-top:1px solid rgba(0, 0, 0, .2);
+                position: absolute;
+                top: 60px;
+                right: 0;
+                bottom: 0;
+                left: 0;
+            }
+            .tabs {
+                position: absolute;
+                bottom: 50px;
+                right: 40px;
+                z-index: 10;
+                height: 40px;
+                box-shadow: rgba(0,0,0,.2) 0 0 4px 2px;
+                background: #fff;
+                border: 1px solid #999;
+                width: auto;
+                overflow: hidden;
+                border-radius: 4px;
+            }
+            .tabs > li {
+                float: left;
+                border-left: 1px solid #E5E5E5;
+                font-size: 13px;
+                font-family: Helvetica,Arial;
+                text-align: center;
+                color: #999;
+            }
+            .tabs > li a {
+                display: block;
+                padding: 10px 14px;
+                text-decoration: none;
+                color: #999;
+                opacity: .2;
+            }
+            .tabs > li span {
+                display: inline-block;
+                vertical-align: middle;
+            }
+            .tabs > li .basemap {
+                width: 20px;
+                height: 20px;
+                border-radius: 2px;
+                background-size: cover;
+                box-shadow: 1px 0 0 rgba(0, 0, 0, .2),
+                            -1px 0 0 rgba(0, 0, 0, .2),
+                            0 1px 0 rgba(0, 0, 0, .2),
+                            0 -1px 0 rgba(0, 0, 0, .2)
+            }
+            .tabs > li:first-child {
+                border: 0;
+            }
+            .tabs > li a.is-active {
+                opacity: 1;
+                font-weight: bold;
+                color: #666;
+            }
+            .basemap-01 {
+                background: url(../img/basemap-white.png) no-repeat center center;
+            }
+            .basemap-02 {
+                background: url(../img/basemap-dark.png) no-repeat center center;
+            }
+        </style>
+        <link rel="stylesheet" href="http://libs.cartocdn.com/cartodb.js/v3/3.14/themes/css/cartodb.css" />
     </head>
     <body>
         <!--[if lt IE 8]>
             <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
         <![endif]-->
+        <ul class="tabs">
+            <li>
+                <a href="#" id="white" class="is-active">
+                    <span class="basemap basemap-01"></span>
+                    <!--<span>
+                        Basemap claro
+                    </span>-->
+                </a>
+            </li>
+            <li>
+                <a href="#" id="dark">
+                    <span class="basemap basemap-02"></span>
+                    <!--<span>
+                        Basemap oscuro
+                    </span>-->
+                </a>
+            </li>
+        </ul>
+
         <div class="graph"></div>
+        <div id="map"></div>
         <!-- include cartodb.js library -->
-        <script src="js/vendor/cartodb.js"></script>
-        <script src="js/vendor/d3.min.js"></script>
+        <script src="https://cartodb-libs.global.ssl.fastly.net/cartodb.js/v3/3.14/cartodb.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.2/d3.min.js" charset="utf-8"></script>
         <script src="js/vendor/nv.d3.min.js"></script>
         <script src="js/main.js"></script>
     </body>
