@@ -1,6 +1,10 @@
-/* Coniguration block*/
+/*
+  Coniguration block
+*/
+
 // Fake data?
 var isFake = false;
+// VizJson to load
 var vizJson = 'https://elpais.cartodb.com/u/jacintoelpais/api/v2/viz/5abd192e-0073-11e5-bad7-0e9d821ea90d/viz.json';
 // User at CartoDB to retrieve the data
 var sql = new cartodb.SQL({user: 'jacintoelpais'});
@@ -18,41 +22,37 @@ var partiesData = {
   '5' : {name : 'Podemos', color : '#4B1E5B'},
   '6' : {name : 'Union Progreso y Democracia', color : '#c3007f'}
 };
-// Time format for the graph, details https://github.com/mbostock/d3/wiki/Time-Formatting
-var graphTimeFormat='%d/%m';
 // Selector at the HTML to load the graph
 var selector = '.graph';
 // Adjust the verticalBar to the Torque animation (hack)
 var barOffset = - 50;
-/* End of the configuration block*/
+
+/*
+  End of the configuration block
+*/
 
 var baseLayer = 'http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png';
 var basemap;
 
 function main() {
   var sqlStm = 'SELECT COUNT(*) counts, date_trunc(\'{{groupDate}}\',postedtime) date, category_name cat FROM '
-  + twitterTable + ' GROUP BY 2,3 ORDER BY 2,3 ASC';
+      + twitterTable + ' GROUP BY 2,3 ORDER BY 2,3 ASC';
 
   sql.execute(sqlStm,{groupDate : groupDate})
     .done(function(twitterData){
-      sql.execute('SELECT DISTINCT(category_name) cat FROM ' + twitterTable + ' ORDER BY category_name')
-        .done(function(catsData){
-            var lineClasses = [];
-            catsData.rows.forEach(function(catRow){
-              var catName = catRow.cat;
-              lineClasses.push(
-                lineData(
-                  catName,
-                  twitterData.rows.filter(function(twiterRow){
-                    return twiterRow.cat == catName
-                  })
-                )
-              );
-            });
-            // ready to call the graph constructor
-            createGraph(lineClasses);
-        })
-        .error(logErrors);
+      var lineClasses = [];
+      Object.keys(partiesData).forEach(function(catName){
+        lineClasses.push(
+          lineData(
+            catName,
+            twitterData.rows.filter(function(twiterRow){
+              return twiterRow.cat == catName
+            })
+          )
+        );
+      });
+      // ready to call the graph constructor
+      createGraph(lineClasses);
     })
   .error(logErrors);
 }
@@ -70,10 +70,7 @@ function lineData(catName, twitterData){
     if (isFake){
       y = y + Math.floor(y*Math.random() * Math.floor((Math.random()*2-1)));
     }
-    values.push({
-      x : date,
-      y : y
-    });
+    values.push({x : date, y : y });
   });
   return {
     key    : partiesData[catName].name,
@@ -92,22 +89,14 @@ function createGraph(lineClasses){
 
     var chart = nv.models.lineChart()
       .margin({left: 0, right: 0, top: 0, bottom: 0})  // Adjust chart margins to give the x-axis some breathing room.
-      //.useInteractiveGuideline(true)  //We want nice looking tooltips and a guideline!
-      //.transitionDuration(350)  //how fast do you want the lines to transition?
       .interactive(false)
-      .showLegend(false)       //Show the legend, allowing users to turn on/off line series.
-      .showYAxis(false)        //Show the y-axis
-      //.showXAxis(false)        //Show the x-axis
+      .showLegend(false)
+      .showYAxis(false)
+      /* We need to have an X axis rendered (even if we hide it with CSS in order to have
+         a proper xAxis range() and domain() pairs so we can position the verticalBar*/
+      .showXAxis(true)
       .interpolate('basis')
-      //.xScale(d3.time.scale())
       ;
-
-    chart.xAxis     //Chart x-axis settings
-        .tickFormat(function(d) {
-              return d3.time.format(graphTimeFormat)(new Date(d))
-            });
-
-    //chart._options.tooltipContent = function (a,b,c){return false};
 
     d3.select(selector)
           .append('svg')    //Select the <svg> element you want to render the chart in.
@@ -120,7 +109,7 @@ function createGraph(lineClasses){
       .attr("x1", chart.margin().left)
       .attr("y1", chart.margin().top-5)
       .attr("x2", chart.margin().left)
-      .attr("y2", 130)
+      .attr("y2", 80)
       .attr("class","verticalLine");
 
     //Update the chart when window resizes.
@@ -131,36 +120,25 @@ function createGraph(lineClasses){
   });
 }; // Create Graph
 
-function createMap(verticalBar,chart){
 
-  cartodb.createVis('map', vizJson, {
-      title: false
-  })
-  .done(function(vis, layers) {
-    basemap = layers[0];
-    basemap.setUrl(baseLayer);
-    layers[1]
-      .on('featureOver', function(e, latlng, pos, data) {
-        cartodb.log.log(e, latlng, pos, data);
-      })
-      .on('change:time', function(changes) {
+function createMap(verticalBar,chart){
+  cartodb.createVis('map', vizJson, {title: false })
+    .done(function(vis, layers) {
+      basemap = layers[0];
+      basemap.setUrl(baseLayer);
+      layers[1]
+        .on('change:time', function(changes) {
           //update the vertical bar
           if (verticalBar && chart){
-            var x1 =  chart.xAxis.scale()(new Date(changes.time)) + barOffset;
-
-            if (x1 > 0 && x1 < chart.xAxis.range()[1]){
-              verticalBar.attr("x1",x1).attr("x2",x1);
+            var x =  chart.xAxis.scale()(new Date(changes.time)) + barOffset;
+            if (x > 0 && x < chart.xAxis.range()[1]){
+              verticalBar.attr("x1",x).attr("x2",x);
             }
           }
       });
-    // you can get the native map to work with it
-    var map = vis.getNativeMap();
   })
-  .error(function(err) {
-    console.log(err);
-  });
+  .error(logErrors);
 }
-
 
 
 
