@@ -1,11 +1,11 @@
 /* Coniguration block*/
-var baseLayer = 'http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png';
 // Fake data?
-var isFake = true;
+var isFake = false;
+var vizJson = 'https://elpais.cartodb.com/u/jacintoelpais/api/v2/viz/5abd192e-0073-11e5-bad7-0e9d821ea90d/viz.json';
 // User at CartoDB to retrieve the data
-var sql = new cartodb.SQL({user: 'dcarrion'});
+var sql = new cartodb.SQL({user: 'jacintoelpais'});
 //  Name of the table with the tiweets
-var twitterTable = 'lebron2015';
+var twitterTable = 'tuits_test';
 // Aggregation level to retrieve the data
 // Valid values are MINUTE, HOUR, DAY, WEEK, MONTH, YEAR
 var groupDate = 'DAY';
@@ -13,19 +13,22 @@ var groupDate = 'DAY';
 var afterTime = '2015-01-01';
 //  Name and colors to assign to the parties
 var partiesData = {
-  '1' : {name : 'PSOE', color : '#CE4039',fake: .6},
-  '2' : {name : 'Partido Popular', color : '#42A4DC',fake: .8},
-  '3' : {name : 'Izquierda Unida', color : '#539147', fake: -0.2},
-  '4' : {name : 'Ciudadanos', color : '#E08048', fake: -0.8},
-  '5' : {name : 'Podemos', color : '#4B1E5B', fake: 0.8},
-  '6' : {name : 'Union Progreso y Democracia', color : '#c3007f', fake:-0.1}
+  '1' : {name : 'PSOE', color : '#CE4039'},
+  '2' : {name : 'Partido Popular', color : '#42A4DC'},
+  '3' : {name : 'Izquierda Unida', color : '#539147'},
+  '4' : {name : 'Ciudadanos', color : '#E08048'},
+  '5' : {name : 'Podemos', color : '#4B1E5B'},
+  '6' : {name : 'Union Progreso y Democracia', color : '#c3007f'}
 };
 // Time format for the graph, details https://github.com/mbostock/d3/wiki/Time-Formatting
 var graphTimeFormat='%d/%m';
 // Selector at the HTML to load the graph
 var selector = '.graph';
-
 /* End of the configuration block*/
+
+var baseLayer = 'http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png';
+var basemap;
+
 function main() {
   var sqlStm = 'SELECT COUNT(*) counts, date_trunc(\'{{groupDate}}\',postedtime) date, category_name cat FROM ' + twitterTable + ' WHERE postedtime > \'{{afterTime}}\'::DATE GROUP BY 2,3 ORDER BY 2,3 ASC';
 
@@ -93,7 +96,7 @@ function createGraph(lineClasses){
       .interactive(false)
       .showLegend(false)       //Show the legend, allowing users to turn on/off line series.
       .showYAxis(false)        //Show the y-axis
-      .showXAxis(false)        //Show the x-axis
+      //.showXAxis(false)        //Show the x-axis
       .interpolate('basis')
       //.xScale(d3.time.scale())
       ;
@@ -117,9 +120,7 @@ function createGraph(lineClasses){
       .attr("y1", chart.margin().top-5)
       .attr("x2", chart.margin().left)
       .attr("y2", 130)
-      .style("stroke-width", 2)
-      .style("stroke", "gray")
-      .style("fill", "none");
+      .attr("class","verticalLine");
 
     //Update the chart when window resizes.
     nv.utils.windowResize(function() { chart.update() });
@@ -131,7 +132,7 @@ function createGraph(lineClasses){
 
 function createMap(verticalBar,chart){
 
-  cartodb.createVis('map', 'https://team.cartodb.com/u/piensaenpixel/api/v2/viz/ab8866f6-005a-11e5-ba52-0e0c41326911/viz.json', {
+  cartodb.createVis('map', vizJson, {
       title: false
   })
   .done(function(vis, layers) {
@@ -143,7 +144,7 @@ function createMap(verticalBar,chart){
       })
       .on('change:time', function(changes) {
           //update the vertical bar
-          /*if (verticalBar && chart){
+          if (verticalBar && chart){
             verticalBar.attr(
               "x1",
               chart.xAxis.scale()(new Date(changes.time))+chart.margin().left
@@ -151,7 +152,7 @@ function createMap(verticalBar,chart){
             .attr(
               "x2",
               chart.xAxis.scale()(new Date(changes.time))+chart.margin().left)
-          }*/
+          }
       });
     // you can get the native map to work with it
     var map = vis.getNativeMap();
@@ -165,7 +166,7 @@ function createMap(verticalBar,chart){
 
 
 $( document ).ready(function() {
-  var basemap;
+
   // Base layer switcher
   $( "#white" ).click(function() {
           var baseLayer = 'http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png';
