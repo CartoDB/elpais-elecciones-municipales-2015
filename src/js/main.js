@@ -112,6 +112,7 @@ function createGraph(lineClasses){
     //Update the chart when window resizes.
     nv.utils.windowResize(function() { chart.update() });
 
+
     return chart;
   });// nv.addGraph
 }; // Create Graph
