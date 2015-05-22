@@ -1,23 +1,27 @@
 /* Coniguration block*/
 
+// Fake data?
+var isFake = true;
 // User at CartoDB to retrieve the data
-var sql = new cartodb.SQL({user: 'jsanz'});
+var sql = new cartodb.SQL({user: 'dcarrion'});
 //  Name of the table with the tiweets
-var twitterTable = 'twitter_test';
+var twitterTable = 'lebron2015';
 // Aggregation level to retrieve the data
 // Valid values are MINUTE, HOUR, DAY, WEEK, MONTH, YEAR
-var groupDate = 'MINUTE';
+var groupDate = 'DAY';
 // Date since the data wants to be retrieved
 var afterTime = '2015-01-01';
 //  Name and colors to assign to the parties
 var partiesData = {
-  '1' : {name : 'PSOE', color : '#cd1f25'},
-  '2' : {name : 'Partido Popular', color : '#5ca2dc'},
-  '3' : {name : 'Izquierda Unida', color : '#aa0028'},
-  '4' : {name : 'Ciudadanos', color : '#fe6d2c'},
-  '5' : {name : 'Podemos', color : '#593561'},
-  '6' : {name : 'Union Progreso y Democracia', color : '#c3007f'}
+  '1' : {name : 'PSOE', color : '#cd1f25',fake: .6},
+  '2' : {name : 'Partido Popular', color : '#5ca2dc',fake: .8},
+  '3' : {name : 'Izquierda Unida', color : '#aa0028', fake: -0.2},
+  '4' : {name : 'Ciudadanos', color : '#fe6d2c', fake: -0.8},
+  '5' : {name : 'Podemos', color : '#593561', fake: 0.8},
+  '6' : {name : 'Union Progreso y Democracia', color : '#c3007f', fake:-0.1}
 };
+// Time format for the graph, details https://github.com/mbostock/d3/wiki/Time-Formatting
+var graphTimeFormat='%d/%m';
 // Selector at the HTML to load the graph
 var selector = '.graph';
 
@@ -58,9 +62,13 @@ function lineData(catName, twitterData){
   var values = [];
   twitterData.forEach(function(twitt){
     var date = +d3.time.format.iso.parse(twitt.date);
+    var y = twitt.counts;
+    if (isFake){
+      y = y + Math.floor(y*Math.random() * Math.floor((Math.random()*2-1)));
+    }
     values.push({
       x : +date,
-      y : twitt.counts
+      y : y
     });
   });
   return {
@@ -82,6 +90,7 @@ function createGraph(lineClasses){
       .margin({left: 0, right: 0, top: 0, bottom: 0})  // Adjust chart margins to give the x-axis some breathing room.
       //.useInteractiveGuideline(true)  //We want nice looking tooltips and a guideline!
       //.transitionDuration(350)  //how fast do you want the lines to transition?
+      .interactive(false)
       .showLegend(false)       //Show the legend, allowing users to turn on/off line series.
       .showYAxis(false)        //Show the y-axis
       .showXAxis(true)        //Show the x-axis
@@ -90,10 +99,10 @@ function createGraph(lineClasses){
 
     chart.xAxis     //Chart x-axis settings
         .tickFormat(function(d) {
-              return d3.time.format('%H:%M')(new Date(d))
+              return d3.time.format(graphTimeFormat)(new Date(d))
             });
 
-    chart._options.tooltipContent = function (a,b,c){return"<p>"+c+"</p>"};
+    //chart._options.tooltipContent = function (a,b,c){return false};
 
     d3.select(selector)
           .append('svg')    //Select the <svg> element you want to render the chart in.
