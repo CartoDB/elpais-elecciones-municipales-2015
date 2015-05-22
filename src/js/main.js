@@ -122,7 +122,12 @@ function createGraph(lineClasses){
 
 
 function createMap(verticalBar,chart){
-  cartodb.createVis('map', vizJson, {title: false })
+  cartodb.createVis('map', vizJson,
+    {
+      title: false,
+      shareable: false,
+      search:false,
+    })
     .done(function(vis, layers) {
       basemap = layers[0];
       basemap.setUrl(baseLayer);
