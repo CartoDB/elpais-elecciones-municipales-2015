@@ -13,12 +13,12 @@ var groupDate = 'DAY';
 var afterTime = '2015-01-01';
 //  Name and colors to assign to the parties
 var partiesData = {
-  '1' : {name : 'PSOE', color : '#cd1f25',fake: .6},
-  '2' : {name : 'Partido Popular', color : '#5ca2dc',fake: .8},
-  '3' : {name : 'Izquierda Unida', color : '#aa0028', fake: -0.2},
-  '4' : {name : 'Ciudadanos', color : '#fe6d2c', fake: -0.8},
-  '5' : {name : 'Podemos', color : '#593561', fake: 0.8},
-  '6' : {name : 'Union Progreso y Democracia', color : '#c3007f', fake:-0.1}
+  '1' : {name : 'PSOE', color : '#cd1f25'},
+  '2' : {name : 'Partido Popular', color : '#5ca2dc'},
+  '3' : {name : 'Izquierda Unida', color : '#aa0028'},
+  '4' : {name : 'Ciudadanos', color : '#fe6d2c'},
+  '5' : {name : 'Podemos', color : '#593561'},
+  '6' : {name : 'Union Progreso y Democracia', color : '#c3007f'}
 };
 // Time format for the graph, details https://github.com/mbostock/d3/wiki/Time-Formatting
 var graphTimeFormat='%d/%m';
