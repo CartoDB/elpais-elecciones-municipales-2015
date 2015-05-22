@@ -15,11 +15,11 @@ var twitterTable = 'elecciones_partidos';
 var groupDate = 'HOUR';
 //  Name and colors to assign to the parties
 var partiesData = {
-  '1' : {name : 'PSOE', color : '#CE4039'},
-  '2' : {name : 'Partido Popular', color : '#42A4DC'},
-  '3' : {name : 'Izquierda Unida', color : '#539147'},
+  '1' : {name : 'Partido Popular', color : '#42A4DC'},
+  '2' : {name : 'PSOE', color : '#CE4039'},
+  '3' : {name : 'Podemos', color : '#4B1E5B'},
   '4' : {name : 'Ciudadanos', color : '#E08048'},
-  '5' : {name : 'Podemos', color : '#4B1E5B'},
+  '5' : {name : 'Izquierda Unida', color : '#539147'},
   '6' : {name : 'Union Progreso y Democracia', color : '#c3007f'}
 };
 // Selector at the HTML to load the graph
