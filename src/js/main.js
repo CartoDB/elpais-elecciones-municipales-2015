@@ -5,14 +5,14 @@
 // Fake data?
 var isFake = false;
 // VizJson to load
-var vizJson = 'https://elpais.cartodb.com/u/jacintoelpais/api/v2/viz/5abd192e-0073-11e5-bad7-0e9d821ea90d/viz.json';
+var vizJson = 'https://team.cartodb.com/u/piensaenpixel/api/v2/viz/995e0c70-0059-11e5-a962-0e0c41326911/viz.json';
 // User at CartoDB to retrieve the data
-var sql = new cartodb.SQL({user: 'jacintoelpais'});
+var sql = new cartodb.SQL({user: 'dcarrion'});
 //  Name of the table with the tiweets
-var twitterTable = 'tuits_test';
+var twitterTable = 'elecciones_partidos';
 // Aggregation level to retrieve the data
 // Valid values are MINUTE, HOUR, DAY, WEEK, MONTH, YEAR
-var groupDate = 'DAY';
+var groupDate = 'HOUR';
 //  Name and colors to assign to the parties
 var partiesData = {
   '1' : {name : 'PSOE', color : '#CE4039'},
@@ -25,7 +25,7 @@ var partiesData = {
 // Selector at the HTML to load the graph
 var selector = '.graph';
 // Adjust the verticalBar to the Torque animation (hack)
-var barOffset = - 50;
+var barOffset = 0;
 
 /*
   End of the configuration block
