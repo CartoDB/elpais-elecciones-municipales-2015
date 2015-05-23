@@ -5,7 +5,7 @@
 // Fake data?
 var isFake = false;
 // VizJson to load
-var vizJson = 'https://team.cartodb.com/u/piensaenpixel/api/v2/viz/995e0c70-0059-11e5-a962-0e0c41326911/viz.json';
+var vizJson = 'viz.json';
 // User at CartoDB to retrieve the data
 var sql = new cartodb.SQL({user: 'dcarrion'});
 //  Name of the table with the tiweets
