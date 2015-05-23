@@ -35,8 +35,8 @@
               [value=2] { marker-fill: #ce4039; }
               [value=3] { marker-fill: #4b1e5b; }
               [value=4] { marker-fill: #539147; }
-              [value=5] { marker-fill: #e08048; }
-              [value=6] { marker-fill-opacity: 0; }
+              [value=5] { marker-fill: #FF5C00; }
+              [value=6] { marker-fill: #c3007f; }
             }
             #elecciones_partidos::point2 {
               marker-width: 2;
@@ -49,8 +49,8 @@
               [value=2] { marker-fill: #ce4039; }
               [value=3] { marker-fill: #4b1e5b; }
               [value=4] { marker-fill: #539147; }
-              [value=5] { marker-fill: #e08048; }
-              [value=6] { marker-fill-opacity: 0; }
+              [value=5] { marker-fill: #FF5C00; }
+              [value=6] { marker-fill: #c3007f; }
             }
             #elecciones_partidos::point3 {
               marker-width: 10;
@@ -63,8 +63,8 @@
               [value=2] { marker-line-color: #cd1f25; }
               [value=3] { marker-line-color: #aa0028; }
               [value=4] { marker-line-color: #593561; }
-              [value=5] { marker-line-color: #fe6d2c; }
-              [value=6] { marker-line-color: #c3007f; marker-line-opacity: 0; }
+              [value=5] { marker-line-color: #FF5C00; }
+              [value=6] { marker-line-color: #FF5C00;}
             }
 
             #elecciones_partidos[frame-offset=1] {
@@ -183,6 +183,105 @@
             .basemap-02 {
                 background: url(img/basemap-dark.png) no-repeat center center;
             }
+
+            .legends {
+                position: absolute;
+                right: 20px;
+                bottom: 50px;
+                z-index: 10;
+                box-shadow: rgba(0,0,0,.2) 0 0 4px 2px;
+                background: #fff;
+                border: 1px solid #999;
+                width: auto;
+                overflow: hidden;
+                border-radius: 4px;
+                padding: 20px;
+                font-size: 11px;
+                font-weight: bold;
+                font-family: Helvetica,Arial;
+                color: #999;
+            }
+            .legends > li {
+              margin-bottom: 8px;
+            }
+            .legends > li:last-child {
+              margin-bottom: 0;
+            }
+            .legends label, .legends input {
+              display: inline-block;
+              vertical-align: middle;
+            }
+            .legends input {
+              margin-right: 8px;
+              -webkit-appearance: none;
+              width: 12px;
+              height: 12px;
+              border-radius: 50%;
+              border: 2px solid #999;
+              position: relative;
+              cursor: pointer;
+            }
+            .legends input:focus {
+              outline: none;
+            }
+            .legends input:checked:before {
+              content:"";
+              width: 4px;
+              height: 4px;
+              position: absolute;
+              display: inline-block;
+              left: 50%;
+              top: 50%;
+              margin-left: -2px;
+              margin-top: -2px;
+              background: #999;
+              border-radius: 50%;
+            }
+
+            .legends .legends-01 input {
+              border-color: #42a4dc;
+            }
+            .legends .legends-01 input:checked:before {
+              background: #42a4dc; 
+            }
+
+            .legends .legends-02 input {
+              border-color: #ce4039;
+            }
+            .legends .legends-02 input:checked:before {
+              background: #ce4039; 
+            }
+
+            .legends .legends-03 input {
+              border-color: #4b1e5b;
+            }
+            .legends .legends-03 input:checked:before {
+              background: #4b1e5b; 
+            }
+
+            .legends .legends-04 input {
+              border-color: #539147;
+            }
+            .legends .legends-04 input:checked:before {
+              background: #539147; 
+            }
+
+            .legends .legends-05 input {
+              border-color: #FF5C00;
+            }
+            .legends .legends-05 input:checked:before {
+              background: #FF5C00; 
+            }
+
+
+            .legends .legends-06 input {
+              border-color: #c3007f;
+            }
+            .legends .legends-06 input:checked:before {
+              background: #c3007f; 
+            }
+
+
         </style>
         <link rel="stylesheet" href="http://libs.cartocdn.com/cartodb.js/v3/3.14/themes/css/cartodb.css" />
     </head>
@@ -191,26 +290,6 @@
             <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
         <![endif]-->
 
-        <ul class="map-list" style="z-index: 20; position: absolute">
-            <li>
-                <label for="pp">pp</label><input type="checkbox" checked value="1" id="pp" name="partido">
-            </li>
-            <li>
-                <label for="psoe">psoe</label><input type="checkbox" checked value="2" id="psoe" name="partido">
-            </li>
-            <li>
-                <label for="podemos">podemos</label><input type="checkbox" checked value="3" id="podemos" name="partido">
-            </li>
-            <li>
-                <label for="iu">iu</label><input type="checkbox" checked value="4" id="iu" name="partido">
-            </li>
-            <li>
-                <label for="ciudadanos">ciudadanos</label><input type="checkbox" checked value="5" id="ciudadanos" name="partido">
-            </li>
-            <li>
-                <label for="upyd">upyd</label><input type="checkbox" checked value="6" id="upyd" name="partido">
-            </li>
-        </ul>
 
 
         <ul class="tabs">
@@ -229,6 +308,27 @@
                         Basemap oscuro
                     </span>-->
                 </a>
+            </li>
+        </ul>
+
+        <ul class="legends">
+            <li class="legends-01">
+                <input type="checkbox" checked value="1" id="pp" name="partido"><label for="pp">PP</label>
+            </li>
+            <li class="legends-02">
+                <input type="checkbox" checked value="2" id="psoe" name="partido"><label for="psoe">PSOE</label>
+            </li>
+            <li class="legends-03">
+                <input type="checkbox" checked value="3" id="podemos" name="partido"><label for="podemos">PODEMOS</label>
+            </li>
+            <li class="legends-04">
+                <input type="checkbox" checked value="4" id="iu" name="partido"><label for="iu">IU</label>
+            </li>
+            <li class="legends-05">
+                <input type="checkbox" checked value="5" id="ciudadanos" name="partido"><label for="ciudadanos">CIUDADANOS</label>
+            </li>
+            <li class="legends-06">
+                <input type="checkbox" checked value="6" id="upyd" name="partido"><label for="upyd">UPyD</label>
             </li>
         </ul>
 

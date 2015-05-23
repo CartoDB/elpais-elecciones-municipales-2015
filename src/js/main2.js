@@ -123,8 +123,8 @@ function createGraph(lineClasses){
 
 var map = L.map('map', {
     zoomControl: false,
-    center: [43, 0],
-    zoom: 3
+    center: [39.46164364205549, -2.362060546875],
+    zoom: 6
 });
 
 basemap = L.tileLayer('http://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png', {
@@ -185,10 +185,8 @@ $( document ).ready(function() {
         }).join('\r\n');
 
       if (newCSS) {
-          console.log(newCSS);
           torqueLayer.setCartoCSS($("#cartocss").html() + newCSS)
       } else {
-          console.log("EEE");
           torqueLayer.setCartoCSS($("#cartocss").html());
       }
   });
