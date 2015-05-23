@@ -155,30 +155,14 @@ function createMap(verticalBar,chart){
               verticalBar.attr("x1",x).attr("x2",x);
             }
           }
-      });
+        })
+        .on("loading", function() {
+          console.log("layer about to load");
+        })
+        .on("load",function(){
+          console.log("layer loaded");
+        });
   });
-
-
- // cartodb.createVis('map', vizJson,
- //   {
- //     title: false,
- //     shareable: false,
- //     search:false,
- //   })
- //   .done(function(vis, layers) {
- //     basemap = layers[0];
- //     basemap.setUrl(baseLayer);
- //     layers[1]
- //       .on('change:time', function(changes) {
- //         //update the vertical bar
- //         if (verticalBar && chart){
- //           var x =  chart.xAxis.scale()(new Date(changes.time)) + barOffset;
- //           if (x > 0 && x < chart.xAxis.range()[1]){
- //             verticalBar.attr("x1",x).attr("x2",x);
- //           }
- //         }
- //     });
- // })
 }
 
 
@@ -188,25 +172,24 @@ $( document ).ready(function() {
 
   $("input[name='partido']").change(function(){
       var categories = [];
-      $.each($("input[name='partido']:checked"), function(){
+      $.each($("input[name='partido']:not(:checked)"), function(){
           categories.push({name: $(this).attr("id"), category: $(this).val()});
       });
 
-      var mySQL = sqlBase + " WHERE category_name IN (" +
-          categories.map(function(c){return c.category}).join(',')
-          + ")";
+      var newCSS = categories.map(function(c){
+        var val = '[value=' + c.category+ ']';
+        return '#elecciones_partidos' + val + '{marker-opacity: 0}' +
+               '#elecciones_partidos::point2' + val + '{marker-fill-opacity: 0}' +
+               '#elecciones_partidos::point3' + val + '{marker-line-opacity: 0}';
+        }).join('\r\n');
 
-      if (mySQL) {
-          console.log(mySQL);
-          torqueLayer.setSQL(mySQL);
+      if (newCSS) {
+          console.log(newCSS);
+          torqueLayer.setCartoCSS($("#cartocss").html() + newCSS)
       } else {
           console.log("EEE");
-          torqueLayer.setSQL("select null limit 0;");
+          torqueLayer.setCartoCSS($("#cartocss").html());
       }
-
-      /*$.each($("input[name='partido']"), function(){
-        this.disabled = true;
-      });*/
   });
 
   // Base layer switcher
