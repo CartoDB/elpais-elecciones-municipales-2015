@@ -100,10 +100,15 @@ html, body, .graph, svg {
   stroke: none;
   fill-opacity: 0.02;
 }
-.nvd3 .nv-axisMaxMin{
+.nvd3 .nv-axisMaxMin, .nv-x{
   display: none;
 }
 
+.verticalLine{
+  stroke-width : 2;
+  stroke       : gray;
+  fill         : none;
+}
 
 
 /* ==========================================================================
