@@ -122,7 +122,7 @@ function createGraph(lineClasses){
 }; // Create Graph
 
 var map = L.map('map', {
-    zoomControl: false,
+    zoomControl: true,
     center: [39.46164364205549, -2.362060546875],
     zoom: 6
 });
