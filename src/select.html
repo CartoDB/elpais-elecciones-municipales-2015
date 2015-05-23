@@ -201,10 +201,10 @@
                 font-family: Helvetica,Arial;
                 color: #999;
             }
-            .legends > li {
+            .legends li {
               margin-bottom: 8px;
             }
-            .legends > li:last-child {
+            .legends li:last-child {
               margin-bottom: 0;
             }
             .legends label, .legends input {
@@ -280,6 +280,10 @@
             .legends .legends-06 input:checked:before {
               background: #c3007f; 
             }
+            .legends h2 {
+              margin-bottom: 12px;
+              color: #333;
+            }
 
 
         </style>
@@ -311,7 +315,9 @@
             </li>
         </ul>
 
-        <ul class="legends">
+        <div class="legends">
+          <h2>Selecciona los partidos</h2>
+          <ul>
             <li class="legends-01">
                 <input type="checkbox" checked value="1" id="pp" name="partido"><label for="pp">PP</label>
             </li>
@@ -330,7 +336,8 @@
             <li class="legends-06">
                 <input type="checkbox" checked value="6" id="upyd" name="partido"><label for="upyd">UPyD</label>
             </li>
-        </ul>
+          </ul>
+        </div>
 
         <div class="graph"></div>
         <div id="map"></div>
