@@ -192,10 +192,12 @@ $( document ).ready(function() {
 
     $.each($("input[name='partido']:not(:checked)"), function(){
         $('.nv-series-' + ($(this).val() - 1)).css('stroke-opacity','0');
+        $('.nv-series-' + ($(this).val() - 1) + ' .nv-area').css('fill-opacity','0')
       });
 
     $.each($("input[name='partido']:checked"), function(){
         $('.nv-series-' + ($(this).val() - 1)).css('stroke-opacity','1');
+        $('.nv-series-' + ($(this).val() - 1) + ' .nv-area').css('fill-opacity','.02');
       });
   });
 
