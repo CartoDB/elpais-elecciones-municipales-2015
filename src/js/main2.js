@@ -134,7 +134,6 @@ basemap.addTo(map);
 
 
 function createMap(verticalBar,chart){
-
   cartodb.createLayer(map, {
       type: "torque",
       options: {
@@ -146,7 +145,6 @@ function createMap(verticalBar,chart){
   }).addTo(map)
   .done(function(layer) {
       torqueLayer = layer;
-
       layer
         .on('change:time', function(changes) {
           //update the vertical bar
@@ -156,12 +154,6 @@ function createMap(verticalBar,chart){
               verticalBar.attr("x1",x).attr("x2",x);
             }
           }
-        })
-        .on("loading", function() {
-          console.log("layer about to load");
-        })
-        .on("load",function(){
-          console.log("layer loaded");
         });
   });
 }
@@ -169,36 +161,39 @@ function createMap(verticalBar,chart){
 
 
 $( document ).ready(function() {
-  var sqlBase = 'select * from elecciones_partidos';
-
   $("input[name='partido']").change(function(){
-      var categories = [];
-      $.each($("input[name='partido']:not(:checked)"), function(){
-          categories.push({name: $(this).attr("id"), category: $(this).val()});
-      });
-
-      var newCSS = categories.map(function(c){
-        var val = '[value=' + c.category+ ']';
-        return '#elecciones_partidos' + val + '{marker-opacity: 0}' +
-               '#elecciones_partidos::point2' + val + '{marker-fill-opacity: 0}' +
-               '#elecciones_partidos::point3' + val + '{marker-line-opacity: 0}';
-        }).join('\r\n');
-
-      if (newCSS) {
-          torqueLayer.setCartoCSS($("#cartocss").html() + newCSS)
-      } else {
-          torqueLayer.setCartoCSS($("#cartocss").html());
-      }
-
+    // Get the categories for the non selected parties
+    var categories = [];
     $.each($("input[name='partido']:not(:checked)"), function(){
-        $('.nv-series-' + ($(this).val() - 1)).css('stroke-opacity','0');
-        $('.nv-series-' + ($(this).val() - 1) + ' .nv-area').css('fill-opacity','0')
-      });
+        categories.push({name: $(this).attr("id"), category: $(this).val()});
+    });
 
+    // Build some new CartoCSS lines to fide those points
+    var newCSS = categories.map(function(c){
+      var val = '[value=' + c.category+ ']';
+      return '#elecciones_partidos' + val + '{marker-opacity: 0}' +
+             '#elecciones_partidos::point2' + val + '{marker-fill-opacity: 0}' +
+             '#elecciones_partidos::point3' + val + '{marker-line-opacity: 0}';
+      }).join('\r\n');
+
+    // Update the layer
+    if (newCSS) {
+      torqueLayer.setCartoCSS($("#cartocss").html() + newCSS)
+    } else {
+      torqueLayer.setCartoCSS($("#cartocss").html());
+    }
+
+    // Set the opacity of the graph lines for the non checked parties
+    $.each($("input[name='partido']:not(:checked)"), function(){
+      $('.nv-series-' + ($(this).val() - 1)).css('stroke-opacity','0');
+      $('.nv-series-' + ($(this).val() - 1) + ' .nv-area').css('fill-opacity','0')
+    });
+
+    // Set the opacity of the graph lines for the checked parties
     $.each($("input[name='partido']:checked"), function(){
-        $('.nv-series-' + ($(this).val() - 1)).css('stroke-opacity','1');
-        $('.nv-series-' + ($(this).val() - 1) + ' .nv-area').css('fill-opacity','.02');
-      });
+      $('.nv-series-' + ($(this).val() - 1)).css('stroke-opacity','1');
+      $('.nv-series-' + ($(this).val() - 1) + ' .nv-area').css('fill-opacity','.02');
+    });
   });
 
   // Base layer switcher
