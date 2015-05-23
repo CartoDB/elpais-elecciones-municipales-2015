@@ -145,6 +145,17 @@ function createMap(verticalBar,chart){
   }).addTo(map)
   .done(function(layer) {
       torqueLayer = layer;
+
+      layer
+        .on('change:time', function(changes) {
+          //update the vertical bar
+          if (verticalBar && chart){
+            var x =  chart.xAxis.scale()(new Date(changes.time)) + barOffset;
+            if (x > 0 && x < chart.xAxis.range()[1]){
+              verticalBar.attr("x1",x).attr("x2",x);
+            }
+          }
+      });
   });
 
 
@@ -192,8 +203,11 @@ $( document ).ready(function() {
           console.log("EEE");
           torqueLayer.setSQL("select null limit 0;");
       }
-  });
 
+      /*$.each($("input[name='partido']"), function(){
+        this.disabled = true;
+      });*/
+  });
 
   // Base layer switcher
   $( "#white" ).click(function() {
