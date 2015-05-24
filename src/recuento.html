@@ -1,0 +1,350 @@
+    <!doctype html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang=""> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8" lang=""> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9" lang=""> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang=""> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title></title>
+        <meta name="description" content="Elecciones El País">
+        <link rel="shortcut icon" href="http://cartodb.com/assets/favicon.ico" />
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="css/nv.d3.css">
+        <link rel="stylesheet" href="css/main.css">
+        <style type="cartocss/text" id="cartocss">
+            /** torque_cat visualization */
+            Map {
+            -torque-frame-count:512;
+            -torque-animation-duration:30;
+            -torque-time-attribute:"postedtime";
+            -torque-aggregation-function:"CDB_Math_Mode(category_name)";
+            -torque-resolution:2;
+            -torque-data-aggregation:linear;
+            }
+            #elecciones_partidos{
+              comp-op: lighter;
+              marker-opacity: 0.2;
+              marker-line-color: #FFF;
+              marker-line-width: 0;
+              marker-line-opacity: 1;
+              marker-type: ellipse;
+              marker-width: 4;
+              marker-fill: #FF9900;
+              [value=1] { marker-fill: #42a4dc; }
+              [value=2] { marker-fill: #ce4039; }
+              [value=3] { marker-fill: #4b1e5b; }
+              [value=4] { marker-fill: #FF5C00 }
+              [value=5] { marker-fill: #539147; }
+              [value=6] { marker-fill: #c3007f; }
+            }
+            #elecciones_partidos::point2 {
+              marker-width: 2;
+              marker-fill: #229A00;
+              marker-fill-opacity: 1;
+              marker-line-color: #fff;
+              marker-line-width: 2;
+              marker-line-opacity: 0;
+              [value=1] { marker-fill: #42a4dc; }
+              [value=2] { marker-fill: #ce4039; }
+              [value=3] { marker-fill: #4b1e5b; }
+              [value=4] { marker-fill: #FF5C00; }
+              [value=5] { marker-fill: #539147; }
+              [value=6] { marker-fill: #c3007f; }
+            }
+            #elecciones_partidos::point3 {
+              marker-width: 10;
+              marker-fill: #229A00;
+              marker-fill-opacity: 0;
+              marker-line-color: #fff;
+              marker-line-width: 1;
+              marker-line-opacity: .2;
+              [value=1] { marker-line-color: #42a4dc; }
+              [value=2] { marker-line-color: #ce4039; }
+              [value=3] { marker-line-color: #4b1e5b; }
+              [value=4] { marker-line-color: #FF5C00; }
+              [value=5] { marker-line-color: #539147; }
+              [value=6] { marker-line-color: #c3007f;}
+            }
+
+            #elecciones_partidos[frame-offset=1] {
+              marker-width:4;
+              marker-opacity:0.45;
+            }
+            #elecciones_partidos[frame-offset=2]{
+              marker-width:5;
+              marker-opacity:0.225;
+            }
+            #elecciones_partidos[frame-offset=3]{
+              marker-width:6;
+              marker-opacity:0.15;
+            }
+            #elecciones_partidos[frame-offset=4]{
+              marker-width:7;
+              marker-opacity:0.1125;
+            }
+            #elecciones_partidos[frame-offset=5] {
+              marker-width:8;
+              marker-opacity:0.09;
+            }
+            #elecciones_partidos[frame-offset=6] {
+              marker-width:9;
+              marker-opacity:0.075;
+            }
+            #elecciones_partidos[frame-offset=7] {
+              marker-width:10;
+              marker-opacity:0.0642857142857143;
+            }
+            #elecciones_partidos[frame-offset=8] {
+              marker-width:11;
+              marker-opacity:0.05625;
+            }
+            #elecciones_partidos[frame-offset=9] {
+              marker-width:12;
+              marker-opacity:0.05;
+            }
+        </style>
+
+
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+            }
+            body, html {
+                min-height: 100%;
+                height: 100%;
+            }
+            iframe {
+                width: 100%;
+                height: 60px;
+            }
+            #map {
+                border-top:1px solid rgba(0, 0, 0, .2);
+                position: absolute;
+                top: 60px;
+                right: 0;
+                bottom: 0;
+                left: 0;
+            }
+            .tabs {
+                position: absolute;
+                top: 80px;
+                right: 20px;
+                z-index: 10;
+                height: 40px;
+                box-shadow: rgba(0,0,0,.2) 0 0 4px 2px;
+                background: #fff;
+                border: 1px solid #999;
+                width: auto;
+                overflow: hidden;
+                border-radius: 4px;
+            }
+            .tabs > li {
+                float: left;
+                border-left: 1px solid #E5E5E5;
+                font-size: 13px;
+                font-family: Helvetica,Arial;
+                text-align: center;
+                color: #999;
+            }
+            .tabs > li a {
+                display: block;
+                padding: 10px 14px;
+                text-decoration: none;
+                color: #999;
+                opacity: .2;
+            }
+            .tabs > li span {
+                display: inline-block;
+                vertical-align: middle;
+            }
+            .tabs > li .basemap {
+                width: 20px;
+                height: 20px;
+                border-radius: 2px;
+                background-size: cover;
+                box-shadow: 1px 0 0 rgba(0, 0, 0, .2),
+                            -1px 0 0 rgba(0, 0, 0, .2),
+                            0 1px 0 rgba(0, 0, 0, .2),
+                            0 -1px 0 rgba(0, 0, 0, .2)
+            }
+            .tabs > li:first-child {
+                border: 0;
+            }
+            .tabs > li a.is-active {
+                opacity: 1;
+                font-weight: bold;
+                color: #666;
+            }
+            .basemap-01 {
+                background: url(img/basemap-white.png) no-repeat center center;
+            }
+            .basemap-02 {
+                background: url(img/basemap-dark.png) no-repeat center center;
+            }
+
+            .legends {
+                position: absolute;
+                right: 20px;
+                bottom: 50px;
+                z-index: 10;
+                box-shadow: rgba(0,0,0,.2) 0 0 4px 2px;
+                background: #fff;
+                border: 1px solid #999;
+                width: auto;
+                overflow: hidden;
+                border-radius: 4px;
+                padding: 20px;
+                font-size: 11px;
+                font-weight: bold;
+                font-family: Helvetica,Arial;
+                color: #999;
+            }
+            .legends li {
+              margin-bottom: 8px;
+            }
+            .legends li:last-child {
+              margin-bottom: 0;
+            }
+            .legends label, .legends input {
+              display: inline-block;
+              vertical-align: middle;
+              cursor: pointer;
+            }
+            .legends input {
+              margin-right: 8px;
+              -webkit-appearance: none;
+              width: 12px;
+              height: 12px;
+              border-radius: 50%;
+              border: 2px solid #999;
+              position: relative;
+            }
+            .legends input:focus {
+              outline: none;
+            }
+            .legends input:checked:before {
+              content:"";
+              width: 4px;
+              height: 4px;
+              position: absolute;
+              display: inline-block;
+              left: 50%;
+              top: 50%;
+              margin-left: -2px;
+              margin-top: -2px;
+              background: #999;
+              border-radius: 50%;
+            }
+
+            .legends .legends-01 input {
+              border-color: #42a4dc;
+            }
+            .legends .legends-01 input:checked:before {
+              background: #42a4dc; 
+            }
+
+            .legends .legends-02 input {
+              border-color: #ce4039;
+            }
+            .legends .legends-02 input:checked:before {
+              background: #ce4039; 
+            }
+
+            .legends .legends-03 input {
+              border-color: #4b1e5b;
+            }
+            .legends .legends-03 input:checked:before {
+              background: #4b1e5b; 
+            }
+
+            .legends .legends-04 input {
+              border-color: #539147;
+            }
+            .legends .legends-04 input:checked:before {
+              background: #539147; 
+            }
+
+            .legends .legends-05 input {
+              border-color: #FF5C00;
+            }
+            .legends .legends-05 input:checked:before {
+              background: #FF5C00; 
+            }
+
+
+            .legends .legends-06 input {
+              border-color: #c3007f;
+            }
+            .legends .legends-06 input:checked:before {
+              background: #c3007f; 
+            }
+            .legends h2 {
+              margin-bottom: 12px;
+              color: #333;
+            }
+
+
+        </style>
+        <link rel="stylesheet" href="http://libs.cartocdn.com/cartodb.js/v3/3.14/themes/css/cartodb.css" />
+    </head>
+    <body>
+        <!--[if lt IE 8]>
+            <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+
+
+
+        <ul class="tabs">
+            <li>
+                <a href="#" id="white" class="is-active">
+                    <span class="basemap basemap-01"></span>
+                    <!--<span>
+                        Basemap claro
+                    </span>-->
+                </a>
+            </li>
+            <li>
+                <a href="#" id="dark">
+                    <span class="basemap basemap-02"></span>
+                    <!--<span>
+                        Basemap oscuro
+                    </span>-->
+                </a>
+            </li>
+        </ul>
+
+        <div class="legends">
+          <h2>Selecciona los partidos</h2>
+          <ul>
+            <li class="legends-01">
+                <input type="checkbox" checked value="1" id="pp" name="partido"><label for="pp">PP</label>
+            </li>
+            <li class="legends-02">
+                <input type="checkbox" checked value="2" id="psoe" name="partido"><label for="psoe">PSOE</label>
+            </li>
+            <li class="legends-03">
+                <input type="checkbox" checked value="3" id="podemos" name="partido"><label for="podemos">PODEMOS</label>
+            </li>
+            <li class="legends-04">
+                <input type="checkbox" checked value="5" id="iu" name="partido"><label for="iu">IU</label>
+            </li>
+            <li class="legends-05">
+                <input type="checkbox" checked value="4" id="ciudadanos" name="partido"><label for="ciudadanos">CIUDADANOS</label>
+            </li>
+            <li class="legends-06">
+                <input type="checkbox" checked value="6" id="upyd" name="partido"><label for="upyd">UPyD</label>
+            </li>
+          </ul>
+        </div>
+
+        <div class="graph"></div>
+        <div id="map"></div>
+        <!-- include cartodb.js library -->
+        <script src="https://cartodb-libs.global.ssl.fastly.net/cartodb.js/v3/3.14/cartodb.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.2/d3.min.js" charset="utf-8"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/nvd3/1.7.0/nv.d3.min.js"></script>
+        <script src="js/recuento.js"></script>
+    </body>
+</html>
