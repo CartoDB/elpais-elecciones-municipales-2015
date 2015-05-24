@@ -18,8 +18,8 @@ var partiesData = {
   '1' : {name : 'Partido Popular', color : '#42A4DC'},
   '2' : {name : 'PSOE', color : '#CE4039'},
   '3' : {name : 'Podemos', color : '#4B1E5B'},
-  '4' : {name : 'Izquierda Unida', color : '#539147'},
-  '5' : {name : 'Ciudadanos', color : '#E08048'},
+  '4' : {name : 'Ciudadanos', color : '#E08048'},
+  '5' : {name : 'Izquierda Unida', color : '#539147'},
   '6' : {name : 'Union Progreso y Democracia', color : '#c3007f'}
 };
 // Selector at the HTML to load the graph
@@ -137,7 +137,7 @@ function createMap(verticalBar,chart){
   cartodb.createLayer(map, {
       type: "torque",
       options: {
-          query: "select * from elecciones_partidos WHERE category_name IN (1,2,3,4,5,6)",
+          query: "select cartodb_id, the_geom_webmercator, category_name, postedtime + interval '2 hours' as postedtime from elecciones_partidos",
           user_name: "dcarrion",
           table_name: twitterTable,
           cartocss: $("#cartocss").html()
