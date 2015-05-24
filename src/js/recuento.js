@@ -1,7 +1,8 @@
 /*
   Coniguration block
 */
-
+// Timestamp (CEST))
+var afterTimestamp = decodeURIComponent(getSearchParameters().date) || '2015-05-24 19:30:00';
 // Fake data?
 var isFake = false;
 // VizJson to load
@@ -35,9 +36,39 @@ var baseLayer = 'http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png';
 var basemap;
 var torqueLayer;
 
+function getSearchParameters() {
+      var prmstr = window.location.search.substr(1);
+      return prmstr != null && prmstr != "" ? transformToAssocArray(prmstr) : {};
+}
+
+function transformToAssocArray( prmstr ) {
+    var params = {};
+    var prmarr = prmstr.split("&");
+    for ( var i = 0; i < prmarr.length; i++) {
+        var tmparr = prmarr[i].split("=");
+        params[tmparr[0]] = tmparr[1];
+    }
+    return params;
+}
+
+
+
 function main() {
-  var sqlStm = 'SELECT COUNT(*) counts, date_trunc(\'{{groupDate}}\',postedtime) date, category_name cat FROM '
-      + twitterTable + ' GROUP BY 2,3 ORDER BY 2,3 ASC';
+  /*
+  WITH data_filter AS (
+    SELECT *
+    FROM jsanz.twitter_test
+    WHERE  postedtime + interval '2 hours' >= timestamp '2015-05-24 00:00:00'
+  )
+  SELECT
+  COUNT(*) counts,
+  date_trunc('HOUR',postedtime + interval '2 hours') date,
+  category_name cat
+  FROM data_filter
+  GROUP BY 2,3
+  ORDER BY 2,3 ASC */
+
+  var sqlStm = 'WITH data_filter AS (SELECT * FROM '+ twitterTable + ' WHERE  postedtime  >= timestamp with time zone \'' + afterTimestamp + '+02\') SELECT COUNT(*) counts, date_trunc(\'{{groupDate}}\',postedtime + interval \'2 hours\') date, category_name cat FROM data_filter GROUP BY 2,3 ORDER BY 2,3 ASC ' ;
 
   sql.execute(sqlStm,{groupDate : groupDate})
     .done(function(twitterData){
@@ -66,7 +97,7 @@ function lineData(catName, twitterData){
   var values = [];
   twitterData.forEach(function(twitt){
     //var date = +d3.time.format.iso.parse(twitt.date);
-    var date = new Date(twitt.date);
+    var date = new Date(twitt.date)- (2*60*60*1000);
     var y = twitt.counts;
     if (isFake){
       y = y + Math.floor(y*Math.random() * Math.floor((Math.random()*2-1)));
@@ -137,7 +168,7 @@ function createMap(verticalBar,chart){
   cartodb.createLayer(map, {
       type: "torque",
       options: {
-          query: "select cartodb_id, the_geom_webmercator, category_name, postedtime + interval '2 hours' as postedtime_local from elecciones_partidos where postedtime >= date '2015-05-24 08:00:00'",
+          query: "select cartodb_id, the_geom_webmercator, category_name, postedtime + interval '2 hours' postedtime from elecciones_partidos where postedtime + '2 hours' >= timestamp '" + afterTimestamp+ "'",
           user_name: "dcarrion",
           table_name: twitterTable,
           cartocss: $("#cartocss").html()
@@ -149,7 +180,7 @@ function createMap(verticalBar,chart){
         .on('change:time', function(changes) {
           //update the vertical bar
           if (verticalBar && chart){
-            var x =  chart.xAxis.scale()(new Date(changes.time)) + barOffset;
+            var x =  chart.xAxis.scale()(new Date(changes.time - (2*60*60*1000))) + barOffset;
             if (x > 0 && x < chart.xAxis.range()[1]){
               verticalBar.attr("x1",x).attr("x2",x);
             }
